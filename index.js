@@ -2,6 +2,8 @@ const BASE_URL = "https://webdev.alphacamp.io";
 const INDEX_URL = BASE_URL + "/api/movies/";
 const POSTER_URL = BASE_URL + "/posters/";
 const movies = [];
+//儲存符合篩選條件的項目
+let filteredMovies = [];
 const dataPanel = document.querySelector("#data-panel");
 // 每頁顯示12筆資料
 const MOVIES_PER_PAGE = 12;
@@ -19,10 +21,12 @@ function renderPaginator(amount) {
 }
 // 7.分頁顯示,一頁顯示 12 筆資料，使用 slice 方法
 function getMoviesByPage(page) {
+  // 如果搜尋清單有東西，就取搜尋清單 filteredMovies，否則就還是取總清單 movies
+  const data = filteredMovies.length ? filteredMovies : movies;
   // 計算起始index
   const startIndex = (page - 1) * MOVIES_PER_PAGE;
   // 回傳切割後的新陣列
-  return movies.slice(startIndex, startIndex + MOVIES_PER_PAGE);
+  return data.slice(startIndex, startIndex + MOVIES_PER_PAGE);
 }
 // 9.分頁器點擊事件
 paginator.addEventListener("click", function onPaginatorClicked(event) {
@@ -57,8 +61,6 @@ searchForm.addEventListener("submit", function onSearchFormSubmitted(event) {
   //   取得搜尋關鍵字
   const keyword = searchInput.value.trim().toLowerCase();
 
-  //儲存符合篩選條件的項目
-  let filteredMovies = [];
   //   錯誤處理，輸入有效字串
   if (!keyword.length) {
     return alert("請輸入有效字串");
@@ -71,7 +73,10 @@ searchForm.addEventListener("submit", function onSearchFormSubmitted(event) {
   if (filteredMovies.length === 0) {
     return alert(`您輸入的關鍵字：${keyword} 沒有符合條件的電影`);
   }
-  renderMovieList(filteredMovies);
+  //   重製分頁器
+  renderPaginator(filteredMovies.length);
+  //預設顯示第 1 頁的搜尋結果
+  renderMovieList(getMoviesByPage(1));
 });
 // 鍵盤搜尋事件
 searchForm.addEventListener("keyup", (event) => {
