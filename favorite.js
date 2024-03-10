@@ -7,6 +7,8 @@ const dataPanel = document.querySelector("#data-panel");
 
 // 刪除收藏電影
 function removeFromFavorite(id) {
+  // 收藏清單是空的，就結束函式
+  if (!movies || !movies.length) return;
   // 要使用 splice 方法刪除，所以需要知道元素的 index
   const movieIndex = movies.findIndex((movie) => movie.id === id);
   // 若找不到，則結束函式

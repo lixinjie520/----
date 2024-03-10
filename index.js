@@ -3,7 +3,35 @@ const INDEX_URL = BASE_URL + "/api/movies/";
 const POSTER_URL = BASE_URL + "/posters/";
 const movies = [];
 const dataPanel = document.querySelector("#data-panel");
-
+// 每頁顯示12筆資料
+const MOVIES_PER_PAGE = 12;
+const paginator = document.querySelector("#paginator");
+// 8.產生分頁器
+function renderPaginator(amount) {
+  // 計算總頁數
+  const numberOfPages = Math.ceil(amount / MOVIES_PER_PAGE);
+  //   製作 template
+  let rawHTML = "";
+  for (let page = 1; page <= numberOfPages; page++) {
+    rawHTML += `<li class="page-item"><a class="page-link" href="#" data-page="${page}">${page}</a></li>`;
+  }
+  paginator.innerHTML = rawHTML;
+}
+// 7.分頁顯示,一頁顯示 12 筆資料，使用 slice 方法
+function getMoviesByPage(page) {
+  // 計算起始index
+  const startIndex = (page - 1) * MOVIES_PER_PAGE;
+  // 回傳切割後的新陣列
+  return movies.slice(startIndex, startIndex + MOVIES_PER_PAGE);
+}
+// 9.分頁器點擊事件
+paginator.addEventListener("click", function onPaginatorClicked(event) {
+  //如果被點擊的不是 a 標籤，結束
+  if (event.target.tagName !== "A") return;
+  //透過 dataset 取得被點擊的頁數
+  const page = Number(event.target.dataset.page);
+  renderMovieList(getMoviesByPage(page));
+});
 // 6-1.收藏事件函式
 function addToFavorite(id) {
   // 取得電影收藏清單
@@ -129,7 +157,8 @@ axios
     // console.log(movies);
     // 第三種：展開運算子（spread operator)
     movies.push(...responses.data.results);
-    renderMovieList(movies);
+    renderPaginator(movies.length);
+    renderMovieList(getMoviesByPage(1));
     // console.log(responses.data.results); //80個元素的陣列
     // console.log("---------------------------");
     // console.log(...responses.data.results); //80個單獨的物件
