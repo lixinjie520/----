@@ -36,6 +36,35 @@ paginator.addEventListener("click", function onPaginatorClicked(event) {
   const page = Number(event.target.dataset.page);
   renderMovieList(getMoviesByPage(page));
 });
+// 11.列表監聽
+const listIcons = document.querySelector("#icons");
+listIcons.addEventListener("click", function onListIconClicked(event) {
+  if (event.target.matches(".fa-bars")) {
+    listMode(getMoviesByPage(1));
+  } else if (event.target.matches(".fa-th")) {
+    renderMovieList(getMoviesByPage(1));
+  }
+});
+// 10.列表函式
+function listMode(data) {
+  let rawHTML = "";
+  data.forEach((item) => {
+    rawHTML += `
+          
+      <hr class="mt-2">
+      <div class="d-flex justify-content-between align-items-center">
+         <h5 class="card-title">${item.title}</h5>
+         <div class="btns">
+            <button class="btn btn-primary btn-show-movie" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${item.id}">More</button>
+            <button class="btn btn-info btn-add-favorite" data-id="${item.id}">+</button>
+         </div>
+       </div>
+        `;
+  });
+  console.log(rawHTML);
+  dataPanel.innerHTML = rawHTML;
+}
+
 // 6-1.收藏事件函式
 function addToFavorite(id) {
   // 取得電影收藏清單
